@@ -2,16 +2,15 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "base": ["packages/*"]
+      "@/*": ["src/*"]
     }
   },
-  "include": ["packages", "typings"],
-  "exclude": [
-    "node_modules",
-    "**/dist",
-    "**/__tests__/**/*",
-    "**/test/**",
-    "**/tests/**"
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "../../types"
   ],
-  "extends": "./tsconfig.options.json"
+  "extends": "../../tsconfig.options.json"
 }
