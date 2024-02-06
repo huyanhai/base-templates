@@ -9,5 +9,9 @@
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
     "clean:dist": "rm -rf dist"
+  },
+  "devDependencies": {
+    "change-case": "^5.4.2",
+    "store2": "^2.14.2"
   }
 }
