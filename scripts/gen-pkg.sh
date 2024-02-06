@@ -1,14 +1,27 @@
 #! /bin/bash
 
-# package name
-NAME=$1
+# $#参数总个数
+
+# echo "Generate package: $NAME,$WORK_NAME"
+while [ $# -gt 0 ];
+do 
+  case $1 in
+   -w) WORK_NAME=$2
+       shift
+       ;;
+   -p) NAME=$2
+       shift
+       ;;
+   esac
+   shift
+done
 
 # project dirname
 DIR_PATH=$(pwd)
 
 re="[[:space:]]+"
 
-if [ "$#" -ne 1 ] || [[ $NAME =~ $re ]] || [ "$NAME" == "" ]; then
+if [[ $NAME =~ $re ]] || [ "$NAME" == "" ]; then
   echo "Usage: pnpm run gen \${name} with no space"
   exit 1
 fi
@@ -42,7 +55,7 @@ EOF
 # writed package.json
 cat > $DIR_NAME/package.json <<EOF
 {
-  "name": "@zw-admin/$NAME",
+  "name": "@${WORK_NAME}/$NAME",
   "main": "index.ts",
   "author": "",
   "license": "ISC",
