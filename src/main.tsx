@@ -5,7 +5,7 @@ import { I18nextProvider } from 'react-i18next';
 
 import i18n from '@/locales';
 import AuthRouter from './router/Auth';
-import 'tailwindcss/index.css';
+import './assets/css/index.css';
 
 import App from './App';
 
