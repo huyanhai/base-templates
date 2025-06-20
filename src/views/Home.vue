@@ -1,13 +1,13 @@
 <template>
-  <div class="tw-flex tw-w-screen tw-h-screen tw-flex-col">
-    <p class="tw-text-5xl tw-text-center tw-my-10 tw-text-cyan-900">
+  <div class="flex w-screen h-screen flex-col">
+    <p class="text-5xl text-center my-10 text-cyan-900">
       {{ $t('base.hellow') }}
     </p>
-    <div class="tw-flex tw-justify-center">
+    <div class="flex justify-center">
       <button
         v-for="item in langList"
         :key="item.code"
-        class="tw-text-cyan-700 tw-mx-2"
+        class="text-cyan-700 mx-2"
         @click="setLang(item.code)"
       >
         {{ item.text }}

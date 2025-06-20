@@ -7,8 +7,7 @@ import { setupRoute, router } from '@/router';
 import { setupRouterGuard } from '@/router/guard';
 
 import { setupNProgress } from '@/plugins/nprogress';
-
-import 'tailwindcss/tailwind.css';
+import './assets/index.css';
 
 async function bootstrap() {
   const app = createApp(App);

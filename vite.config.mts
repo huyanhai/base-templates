@@ -1,4 +1,10 @@
-import { defineConfig, HtmlTagDescriptor, loadEnv } from 'vite';
+import {
+  ConfigEnv,
+  defineConfig,
+  HtmlTagDescriptor,
+  loadEnv,
+  UserConfig
+} from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { resolve } from 'path';
 import babel from '@rollup/plugin-babel';
@@ -51,26 +57,30 @@ const externalCDN: HtmlTagDescriptor[] = [
   ...cssLink.map((str) => injectType.css({ href: str }))
 ];
 
-export default ({ mode }) => {
+/** @type {import('vite').UserConfig} */
+export default ({ mode }: ConfigEnv): UserConfig => {
   const { VITE_APP_BASE_API, VITE_APP_BASE_HOST } = loadEnv(
     mode,
     process.cwd()
   );
+
+  const isDev = mode === 'development';
   // https://vitejs.dev/config/
   return defineConfig({
     plugins: [
       vue(),
       babel({ babelHelpers: 'bundled' }),
-      createHtmlPlugin({
-        inject: {
-          data: {
-            title: 'test',
-            description: ''
+      !isDev &&
+        createHtmlPlugin({
+          inject: {
+            data: {
+              title: 'test',
+              description: ''
+            },
+            tags: externalCDN
           },
-          tags: externalCDN
-        },
-        minify: 'terser'
-      })
+          minify: 'terser'
+        })
     ],
     resolve: {
       alias: {
