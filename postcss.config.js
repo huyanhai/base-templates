@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 /** @type {import('postcss-load-config').Config} */
 const config = {
-  plugins: [require('tailwindcss'), require('autoprefixer')]
+  plugins: [require('@tailwindcss/postcss'), require('autoprefixer')]
 };
 
 module.exports = config;

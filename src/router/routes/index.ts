@@ -42,7 +42,15 @@ export const routes: ISyncRoute[] = [
     component: lazy(() => import('@/views/403')),
     meta: {
       title: '403',
-      auth: true
+      auth: false
+    }
+  },
+  {
+    path: '/404',
+    component: lazy(() => import('@/views/404')),
+    meta: {
+      title: '404',
+      auth: false
     }
   }
 ];

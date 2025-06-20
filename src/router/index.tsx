@@ -8,7 +8,11 @@ export const routerTable: RouteObject[] = [
     path: '/',
     element: <Navigate to="/home" />
   },
-  ...initRouterTable(routes)
+  ...initRouterTable(routes),
+  {
+    path: '*',
+    element: <Navigate to="/404" />
+  }
 ];
 
 export default () => useRoutes(routerTable);

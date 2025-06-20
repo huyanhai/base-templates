@@ -22,17 +22,15 @@ const Home = () => {
   ]);
   return (
     <>
-      <div className="tw-flex tw-w-screen tw-h-screen tw-flex-col">
-        <p className="tw-text-5xl tw-text-center tw-my-10 tw-text-cyan-900">
-          {t('hello')}
-        </p>
-        <div className="tw-flex tw-justify-center">
+      <div className="flex w-screen h-screen flex-col">
+        <p className="text-5xl text-center my-10 text-cyan-900">{t('hello')}</p>
+        <div className="flex justify-center">
           {langList.map((item) => {
             return (
               <button
                 v-for="item in langList"
                 key={item.code}
-                className="tw-text-cyan-700 tw-mx-2"
+                className="text-cyan-700 mx-2"
                 onClick={() => changeLanguage(item.code)}
               >
                 {item.text}

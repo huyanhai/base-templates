@@ -1,11 +1,11 @@
 import { useLocation, Navigate } from 'react-router-dom';
 import { ISyncRoute } from './types';
-import type { ReactNode } from 'react';
+import { ReactNode } from 'react';
 
 import { routes } from './routes';
 
 const searchRoute = (path: string, routes: ISyncRoute[]): ISyncRoute => {
-  let route = {} as ISyncRoute;
+  let route = {};
   for (const item of routes) {
     if (path === (item.path?.startsWith('/') ? item.path : `/${item.path}`)) {
       return item;
@@ -17,18 +17,18 @@ const searchRoute = (path: string, routes: ISyncRoute[]): ISyncRoute => {
       }
     }
   }
-  return route;
+  return route as ISyncRoute;
 };
 
-const AuthRouter = (props: { children: ReactNode }): ReactNode => {
+const AuthRouter = (props: { children: ReactNode }) => {
   const { pathname } = useLocation();
 
   const route = searchRoute(pathname, routes);
-  if (route.meta.title) {
+  if (route.meta?.title) {
     document.title = route.meta.title;
   }
 
-  if (!route.meta.auth) return props.children;
+  if (!route.meta?.auth) return props.children;
 
   //   登录
   const token = '123';
