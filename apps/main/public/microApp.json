@@ -1,0 +1,12 @@
+[
+  {
+    "name": "child",
+    "entry": "/subapp/child",
+    "activeRule": "/child"
+  },
+  {
+    "name": "system",
+    "entry": "/subapp/system",
+    "activeRule": "/system"
+  }
+]

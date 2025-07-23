@@ -1,29 +1,17 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
-    "strict": true,
-    "jsx": "preserve",
-    "importHelpers": true,
-    "moduleResolution": "node",
-    "experimentalDecorators": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "sourceMap": true,
     "baseUrl": ".",
-    "lib":[
-      "DOM",
-      "DOM.Iterable"
-    ],
     "paths": {
-      "@/*": [
-        "src/*"
-      ]
-    },
+      "@micro-app/*": ["packages/*", "apps/*"]
+    }
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx"],
+  "include": ["packages", "typings"],
   "exclude": [
-    "node_modules"
-  ]
+    "node_modules",
+    "**/dist",
+    "**/__tests__/**/*",
+    "**/test/**",
+    "**/tests/**"
+  ],
+  "extends": "./tsconfig.options.json"
 }

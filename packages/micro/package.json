@@ -1,0 +1,11 @@
+{
+  "name": "@micro-app/micro",
+  "main": "index.ts",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "test": "echo 'success'",
+    "clean:dist": "rm -rf dist"
+  }
+}
+

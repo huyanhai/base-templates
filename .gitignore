@@ -6,3 +6,6 @@ node_modules
 devops-notification
 *.lock
 *.log
+.history
+dist
+pnpm-lock.yaml

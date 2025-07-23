@@ -1,0 +1,13 @@
+{
+  "name": "@micro-app/child",
+  "main": "index.ts",
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "clean:dist": "rm -rf dist"
+  }
+}
+
