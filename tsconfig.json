@@ -5,7 +5,7 @@
       "@micro-app/*": ["packages/*", "apps/*"]
     }
   },
-  "include": ["packages", "typings/**/*.ts"],
+  "include": ["packages", "typings/**/*.ts", "build"],
   "exclude": [
     "node_modules",
     "**/dist",

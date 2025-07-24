@@ -9,3 +9,4 @@ devops-notification
 .history
 dist
 pnpm-lock.yaml
+output

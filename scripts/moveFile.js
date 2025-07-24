@@ -1,10 +1,9 @@
-/* eslint-disable no-undef */
 /* eslint-disable @typescript-eslint/no-require-imports */
 const fs = require('fs');
 const path = require('path');
 const fsExtra = require('fs-extra');
 
-const targetDir = path.resolve(__dirname, '..', 'build');
+const targetDir = path.resolve(__dirname, '..', 'output');
 const sourceDirPath = path.resolve(__dirname, '..', 'apps');
 
 function createDir(dir) {
