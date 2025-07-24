@@ -1,7 +1,7 @@
 {
     "name": "micro-app",
     "version": "0.0.1",
-    "packageManager": "pnpm@7.1.0",
+    "packageManager": "pnpm@10.13.1",
     "description": "",
     "main": "index.js",
     "workspaces": [
@@ -83,7 +83,7 @@
     },
     "engines": {
         "node": "22.17.1",
-        "pnpm": "7.1.0"
+        "pnpm": "10.13.1"
     },
     "lint-staged": {
         "*.{less,sass}": [
