@@ -10,7 +10,7 @@
     "src/**/*.d.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
-    "../../types"
+    "typings/**/*.d.ts"
   ],
   "extends": "../../tsconfig.options.json"
 }

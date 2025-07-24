@@ -68,5 +68,3 @@ export const startApps = (): void => {
     sandbox: { experimentalStyleIsolation: true }
   });
 };
-
-startApps();

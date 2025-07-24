@@ -1,10 +1,5 @@
 [
   {
-    "name": "child",
-    "entry": "//localhost:8091/",
-    "activeRule": "/child"
-  },
-  {
     "name": "system",
     "entry": "//localhost:8092/",
     "activeRule": "/system"

@@ -40,6 +40,11 @@ pnpm run -C packages/<workspace_name> <command_name> 或者 pnpm run pkg <worksp
 pnpm run pkg demo test
 ```
 
+## 将子包安装到根目录
+```
+pnpm add 子包 --workspace -w
+```
+
 ## 开发规范
 
 - vue 组件使用 PascalCase(首写字母大写)命名
@@ -47,31 +52,3 @@ pnpm run pkg demo test
 - ts/js 文件使用 camelCase (首写字母小写)命名
 - 静态资源 使用 kebab-case(短横线分割)命名
 - 文件夹使用 kebab-case(短横线分割)命名
-
-```
-location / {
-    root /www/sites/8081/index/build/main; 
-
-    index index.html;
-    try_files $uri $uri/ /index.html;
-
-    add_header Access-Control-Allow-Origin *;
-    add_header Access-Control-Allow-Methods 'GET, POST, OPTIONS';
-    add_header Access-Control-Allow-Headers '*';
-    if ($request_method = 'OPTIONS') {
-        return 204;
-    }
-}
-
-location /subapp {
-    alias /www/sites/8081/index/build/subapp/;
-    try_files $uri $uri/ $uri/index.html;
-    
-    add_header Access-Control-Allow-Origin *;
-    add_header Access-Control-Allow-Methods 'GET, POST, OPTIONS';
-    add_header Access-Control-Allow-Headers '*';
-    if ($request_method = 'OPTIONS') {
-        return 204;
-    }
-}
-```

@@ -1,131 +1,228 @@
-import {
-  ConfigEnv,
-  defineConfig,
-  HtmlTagDescriptor,
-  loadEnv,
-  UserConfig
-} from 'vite';
 import vue from '@vitejs/plugin-vue';
+import { type ConfigEnv, loadEnv, defineConfig } from 'vite';
+
+import AutoImport from 'unplugin-auto-import/vite';
+import Components from 'unplugin-vue-components/vite';
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
+
+import UnoCSS from 'unocss/vite';
 import { resolve } from 'path';
-import babel from '@rollup/plugin-babel';
-import { createHtmlPlugin } from 'vite-plugin-html';
-import externalGlobals from 'rollup-plugin-external-globals';
+import {
+  name,
+  version,
+  engines,
+  dependencies,
+  devDependencies
+} from '../../package.json';
 
-const external = {
-  vue: 'Vue',
-  'vue-router': 'VueRouter',
-  'vue-i18n': 'VueI18n',
-  pinia: 'Pinia',
-  axios: 'axios',
-  dayjs: 'dayjs'
+// 平台的名称、版本、运行所需的 node 版本、依赖、构建时间的类型提示
+const __APP_INFO__ = {
+  pkg: { name, version, engines, dependencies, devDependencies },
+  buildTimestamp: Date.now()
 };
 
-const injectType: Record<
-  'js' | 'css',
-  (attrs: Record<string, string>) => HtmlTagDescriptor
-> = {
-  js: (attrs) => ({
-    tag: 'script',
-    injectTo: 'body',
-    attrs: {
-      ...attrs
-    }
-  }),
-  css: (attrs) => ({
-    tag: 'link',
-    injectTo: 'head',
-    attrs: {
-      rel: 'stylesheet',
-      ...attrs
-    }
-  })
-};
+const pathSrc = resolve(__dirname, 'src');
 
-const jsLink = [
-  `https://cdn.jsdelivr.net/npm/vue@3.5.13/dist/vue.global.min.js`,
-  `https://cdn.jsdelivr.net/npm/axios@1.7.9/dist/axios.min.js`,
-  `https://cdn.jsdelivr.net/npm/vue-router@4.5.0/dist/vue-router.global.min.js`,
-  `https://cdn.jsdelivr.net/npm/vue-i18n@11.0.1/dist/vue-i18n.global.min.js`,
-  `https://cdn.jsdelivr.net/npm/vue-demi@0.14.10/lib/index.iife.min.js`,
-  `https://cdn.jsdelivr.net/npm/pinia@2.3.1/dist/pinia.iife.min.js`
-];
+// Vite配置  https://cn.vitejs.dev/config
+export default defineConfig(({ mode }: ConfigEnv) => {
+  const env = loadEnv(mode, process.cwd());
+  const isProduction = mode === 'production';
 
-const cssLink: string[] = [];
-
-const externalCDN: HtmlTagDescriptor[] = [
-  ...jsLink.map((str) => injectType.js({ src: str })),
-  ...cssLink.map((str) => injectType.css({ href: str }))
-];
-
-/** @type {import('vite').UserConfig} */
-export default ({ mode }: ConfigEnv): UserConfig => {
-  const { VITE_APP_BASE_API, VITE_APP_BASE_HOST, VITE_BASE_PATH } = loadEnv(
-    mode,
-    process.cwd()
-  );
-
-  const isDev = mode === 'development';
-  // https://vitejs.dev/config/
-  return defineConfig({
-    base: VITE_BASE_PATH,
-    plugins: [
-      vue(),
-      babel({ babelHelpers: 'bundled' }),
-      !isDev &&
-        createHtmlPlugin({
-          inject: {
-            data: {
-              title: 'test',
-              description: ''
-            },
-            tags: externalCDN
-          },
-          minify: 'terser'
-        })
-    ],
+  return {
     resolve: {
       alias: {
-        '@': resolve(__dirname, 'src')
+        '@': pathSrc
       }
     },
-    server: {
-      hmr: { overlay: false },
-      port: 8090,
-      open: false,
-      host: '0.0.0.0',
-      proxy: {
-        [VITE_APP_BASE_API]: {
-          target: VITE_APP_BASE_HOST,
-          changeOrigin: true,
-          rewrite: (path) =>
-            path.replace(new RegExp(`^${VITE_APP_BASE_API}`), '')
+    css: {
+      preprocessorOptions: {
+        // 定义全局 SCSS 变量
+        scss: {
+          api: 'modern-compiler',
+          additionalData: `@use "@/styles/variables.scss" as *;`
         }
       }
     },
+    server: {
+      host: '0.0.0.0',
+      port: +env.VITE_APP_PORT,
+      open: true,
+      proxy: {
+        // 代理 /dev-api 的请求
+        [env.VITE_APP_BASE_API]: {
+          changeOrigin: true,
+          // 代理目标地址：https://api.youlai.tech
+          target: env.VITE_APP_API_URL,
+          rewrite: (path) =>
+            path.replace(new RegExp('^' + env.VITE_APP_BASE_API), '')
+        }
+      }
+    },
+    plugins: [
+      vue(),
+      UnoCSS(),
+      // API 自动导入
+      AutoImport({
+        // 导入 Vue 函数，如：ref, reactive, toRef 等
+        imports: ['vue', '@vueuse/core', 'pinia', 'vue-router', 'vue-i18n'],
+        resolvers: [
+          // 导入 Element Plus函数，如：ElMessage, ElMessageBox 等
+          ElementPlusResolver({ importStyle: 'sass' })
+        ],
+        eslintrc: {
+          enabled: false,
+          filepath: './.eslintrc-auto-import.json',
+          globalsPropValue: true
+        },
+        vueTemplate: true,
+        // 导入函数类型声明文件路径 (false:关闭自动生成)
+        // dts: true
+        dts: 'typings/auto-imports.d.ts'
+      }),
+      // 组件自动导入
+      Components({
+        resolvers: [
+          // 导入 Element Plus 组件
+          ElementPlusResolver({ importStyle: 'sass' })
+        ],
+        // 指定自定义组件位置(默认:src/components)
+        dirs: ['src/components', 'src/**/components'],
+        // 导入组件类型声明文件路径 (false:关闭自动生成)
+        // dts: true
+        dts: 'typings/components.d.ts'
+      })
+    ],
+    // 预加载项目必需的组件
+    optimizeDeps: {
+      include: [
+        'vue',
+        'vue-router',
+        'element-plus',
+        'pinia',
+        'axios',
+        '@vueuse/core',
+        'default-passive-events',
+        'path-to-regexp',
+        'vue-i18n',
+        'nprogress',
+        'sortablejs',
+        'qs',
+        'path-browserify',
+        '@stomp/stompjs',
+        '@element-plus/icons-vue',
+        'element-plus/es',
+        'element-plus/es/locale/lang/en',
+        'element-plus/es/locale/lang/zh-cn',
+        'element-plus/es/components/alert/style/index',
+        'element-plus/es/components/avatar/style/index',
+        'element-plus/es/components/backtop/style/index',
+        'element-plus/es/components/badge/style/index',
+        'element-plus/es/components/base/style/index',
+        'element-plus/es/components/breadcrumb-item/style/index',
+        'element-plus/es/components/breadcrumb/style/index',
+        'element-plus/es/components/button/style/index',
+        'element-plus/es/components/card/style/index',
+        'element-plus/es/components/cascader/style/index',
+        'element-plus/es/components/checkbox-group/style/index',
+        'element-plus/es/components/checkbox/style/index',
+        'element-plus/es/components/col/style/index',
+        'element-plus/es/components/color-picker/style/index',
+        'element-plus/es/components/config-provider/style/index',
+        'element-plus/es/components/date-picker/style/index',
+        'element-plus/es/components/descriptions-item/style/index',
+        'element-plus/es/components/descriptions/style/index',
+        'element-plus/es/components/dialog/style/index',
+        'element-plus/es/components/divider/style/index',
+        'element-plus/es/components/drawer/style/index',
+        'element-plus/es/components/dropdown-item/style/index',
+        'element-plus/es/components/dropdown-menu/style/index',
+        'element-plus/es/components/dropdown/style/index',
+        'element-plus/es/components/empty/style/index',
+        'element-plus/es/components/form-item/style/index',
+        'element-plus/es/components/form/style/index',
+        'element-plus/es/components/icon/style/index',
+        'element-plus/es/components/image-viewer/style/index',
+        'element-plus/es/components/image/style/index',
+        'element-plus/es/components/input-number/style/index',
+        'element-plus/es/components/input-tag/style/index',
+        'element-plus/es/components/input/style/index',
+        'element-plus/es/components/link/style/index',
+        'element-plus/es/components/loading/style/index',
+        'element-plus/es/components/menu-item/style/index',
+        'element-plus/es/components/menu/style/index',
+        'element-plus/es/components/message-box/style/index',
+        'element-plus/es/components/message/style/index',
+        'element-plus/es/components/notification/style/index',
+        'element-plus/es/components/option/style/index',
+        'element-plus/es/components/pagination/style/index',
+        'element-plus/es/components/popover/style/index',
+        'element-plus/es/components/progress/style/index',
+        'element-plus/es/components/radio-button/style/index',
+        'element-plus/es/components/radio-group/style/index',
+        'element-plus/es/components/radio/style/index',
+        'element-plus/es/components/row/style/index',
+        'element-plus/es/components/scrollbar/style/index',
+        'element-plus/es/components/select/style/index',
+        'element-plus/es/components/skeleton-item/style/index',
+        'element-plus/es/components/skeleton/style/index',
+        'element-plus/es/components/step/style/index',
+        'element-plus/es/components/steps/style/index',
+        'element-plus/es/components/sub-menu/style/index',
+        'element-plus/es/components/switch/style/index',
+        'element-plus/es/components/tab-pane/style/index',
+        'element-plus/es/components/table-column/style/index',
+        'element-plus/es/components/table/style/index',
+        'element-plus/es/components/tabs/style/index',
+        'element-plus/es/components/tag/style/index'
+      ]
+    },
+    // 构建配置
     build: {
-      target: 'es2015',
+      chunkSizeWarningLimit: 2000, // 消除打包大小超过500kb警告
+      minify: isProduction ? 'terser' : false, // 只在生产环境启用压缩
+      terserOptions: isProduction
+        ? {
+            compress: {
+              keep_infinity: true, // 防止 Infinity 被压缩成 1/0，这可能会导致 Chrome 上的性能问题
+              drop_console: true, // 生产环境去除 console.log, console.warn, console.error 等
+              drop_debugger: true, // 生产环境去除 debugger
+              pure_funcs: ['console.log', 'console.info'] // 移除指定的函数调用
+            },
+            format: {
+              comments: false // 删除注释
+            }
+          }
+        : {},
       rollupOptions: {
         output: {
-          entryFileNames: 'js/[name]-[hash].js',
-          chunkFileNames: 'js/[name]-[hash].js',
-          assetFileNames(chunkInfo) {
-            if (chunkInfo.name?.endsWith('.css')) {
-              return 'css/[name]-[hash].[ext]';
-            }
-            return 'assets/[name]-[hash].[ext]';
-          },
-          // manualChunks(id) {
-          //   if (id.includes('react')) {
-          //     return 'react';
-          //   }
-          //   return 'other';
+          // manualChunks: {
+          //   "vue-i18n": ["vue-i18n"],
           // },
-          // 小于5m尝试合并
-          experimentalMinChunkSize: 5 * 1024
-        },
-        external: Object.keys(external),
-        plugins: [externalGlobals(external)]
+          // 用于从入口点创建的块的打包输出格式[name]表示文件名,[hash]表示该文件内容hash值
+          entryFileNames: 'js/[name].[hash].js',
+          // 用于命名代码拆分时创建的共享块的输出命名
+          chunkFileNames: 'js/[name].[hash].js',
+          // 用于输出静态资源的命名，[ext]表示文件扩展名
+          assetFileNames: (assetInfo: any) => {
+            const info = assetInfo.name.split('.');
+            let extType = info[info.length - 1];
+            // console.log('文件信息', assetInfo.name)
+            if (
+              /\.(mp4|webm|ogg|mp3|wav|flac|aac)(\?.*)?$/i.test(assetInfo.name)
+            ) {
+              extType = 'media';
+            } else if (/\.(png|jpe?g|gif|svg)(\?.*)?$/.test(assetInfo.name)) {
+              extType = 'img';
+            } else if (/\.(woff2?|eot|ttf|otf)(\?.*)?$/i.test(assetInfo.name)) {
+              extType = 'fonts';
+            }
+            return `${extType}/[name].[hash].[ext]`;
+          }
+        }
       }
+    },
+    define: {
+      __APP_INFO__: JSON.stringify(__APP_INFO__)
     }
-  });
-};
+  };
+});
