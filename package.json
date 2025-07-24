@@ -16,7 +16,6 @@
         "clean:dist": "pnpm run -r --parallel clean:dist",
         "dev": "pnpm run -r --parallel  dev",
         "main:dev": "pnpm -F main dev",
-        "child:dev": "pnpm -F child dev",
         "build": "pnpm run -r --parallel build && pnpm run move",
         "move": "node scripts/moveFile.js",
         "preview": "pnpm run -r --parallel preview",
