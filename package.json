@@ -59,13 +59,11 @@
         "vue-tsc": "^3.0.3"
     },
     "dependencies": {
-        "@ant-design/icons-vue": "^7.0.1",
         "@micro-app/main": "workspace:^",
         "@micro-app/micro": "workspace:*",
         "@micro-app/utils": "workspace:^",
         "@stomp/stompjs": "^7.1.1",
         "@vueuse/core": "^13.5.0",
-        "ant-design-vue": "^4.2.6",
         "axios": "^1.10.0",
         "change-case": "^5.4.4",
         "dayjs": "^1.11.13",
