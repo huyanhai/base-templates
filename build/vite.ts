@@ -100,7 +100,7 @@ export function build(isProduction: boolean): UserConfig['build'] {
           return `${extType}/[name].[hash].[ext]`;
         }
       },
-      external: Object.keys(NEED_CDN_PKGS)
+      external: isProduction ? Object.keys(NEED_CDN_PKGS) : []
     }
   };
 }
